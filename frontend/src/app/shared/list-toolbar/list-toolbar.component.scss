@@ -1,0 +1,20 @@
+.list-toolbar {
+  padding: 1rem;
+  background: var(--brand-bg);
+  border-bottom: 1px solid var(--bs-border-color);
+}
+
+.list-toolbar .form-label {
+  margin-bottom: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.direction-button {
+  min-width: 5.25rem;
+}
+
+.result-count {
+  padding-bottom: 0.55rem;
+  white-space: nowrap;
+}

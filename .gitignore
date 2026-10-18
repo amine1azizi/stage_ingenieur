@@ -1,0 +1,17 @@
+# build output
+backend/target/
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+# secrets and local files
+.env
+backend/start-dev.sh
+start-dev.sh
+# IDE and OS
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+*.log
+HELP.md

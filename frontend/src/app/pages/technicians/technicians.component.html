@@ -1,0 +1,88 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h1 class="h3 mb-1">Technicians</h1>
+    <p class="text-muted mb-0">Installation and maintenance staff</p>
+  </div>
+  <button class="btn btn-primary" type="button" (click)="openCreate()">Add technician</button>
+</div>
+
+@if (error) {
+  <div class="alert alert-danger">{{ error }}</div>
+}
+@if (success) {
+  <div class="alert alert-success">{{ success }}</div>
+}
+
+@if (showForm) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <h2 class="h5 mb-3">{{ editingId ? 'Edit technician' : 'New technician' }}</h2>
+      <form (ngSubmit)="save()">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Name</label>
+            <input class="form-control" name="name" [(ngModel)]="form.name" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Phone</label>
+            <input class="form-control" name="phone" [(ngModel)]="form.phone">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Email</label>
+            <input class="form-control" type="email" name="email" [(ngModel)]="form.email">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Specialty</label>
+            <input class="form-control" name="specialty" [(ngModel)]="form.specialty">
+          </div>
+        </div>
+        <div class="mt-3 d-flex gap-2">
+          <button class="btn btn-primary" type="submit">Save</button>
+          <button class="btn btn-outline-secondary" type="button" (click)="cancel()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+<div class="card">
+  <app-list-toolbar
+    [placeholder]="'Search technicians...'"
+    [sortOptions]="sortOptions"
+    [filters]="toolbarFilters"
+    [resultCount]="filteredTechnicians.length"
+    [totalCount]="technicians.length"
+    (change)="onListViewChange($event)">
+  </app-list-toolbar>
+  <div class="table-responsive">
+    <table class="table mb-0">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Phone</th>
+          <th>Email</th>
+          <th>Specialty</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (technician of filteredTechnicians; track technician.id) {
+          <tr>
+            <td>{{ technician.name }}</td>
+            <td>{{ technician.phone || '-' }}</td>
+            <td>{{ technician.email || '-' }}</td>
+            <td>{{ technician.specialty || '-' }}</td>
+            <td class="text-end">
+              <button class="btn btn-sm btn-outline-primary me-1" type="button" (click)="openEdit(technician)">Edit</button>
+              <button class="btn btn-sm btn-outline-danger" type="button" (click)="remove(technician)">Delete</button>
+            </td>
+          </tr>
+        } @empty {
+          <tr><td colspan="5" class="text-muted">
+            {{ technicians.length ? 'No results match your search' : (loading ? 'Loading...' : 'No technicians yet.') }}
+          </td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

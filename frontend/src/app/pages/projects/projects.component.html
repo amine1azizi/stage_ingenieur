@@ -1,0 +1,125 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h1 class="h3 mb-1">Projects</h1>
+    <p class="text-muted mb-0">Installation sites linked to clients</p>
+  </div>
+  <button class="btn btn-primary" type="button" (click)="openCreate()">Add project</button>
+</div>
+
+@if (error) {
+  <div class="alert alert-danger">{{ error }}</div>
+}
+@if (success) {
+  <div class="alert alert-success">{{ success }}</div>
+}
+
+@if (showForm) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <h2 class="h5 mb-3">{{ editingId ? 'Edit project' : 'New project' }}</h2>
+      <form #projectForm="ngForm" (ngSubmit)="save()">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Name</label>
+            <input class="form-control" name="name" [(ngModel)]="form.name" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Address</label>
+            <input class="form-control" name="address" [(ngModel)]="form.address">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Client</label>
+            <select class="form-select" name="clientId" [(ngModel)]="form.clientId" required>
+              <option value="">Select a client</option>
+              @for (client of clients; track client.id) {
+                <option [value]="client.id">{{ client.name }}</option>
+              }
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Status</label>
+            <select class="form-select" name="status" [(ngModel)]="form.status" required>
+              @for (status of statuses; track status) {
+                <option [value]="status">{{ statusLabel(status) }}</option>
+              }
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Number of elevators</label>
+            <input class="form-control" type="number" min="0" name="numberOfElevators" [(ngModel)]="form.numberOfElevators">
+          </div>
+          <div class="col-12">
+            <label class="form-label">Project location <span class="text-muted">(optional)</span></label>
+            <app-location-picker
+              [latitude]="form.latitude ?? null"
+              [longitude]="form.longitude ?? null"
+              (locationChange)="onLocationChange($event)">
+            </app-location-picker>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Latitude <span class="text-muted">(optional)</span></label>
+            <input class="form-control" type="number" min="-90" max="90" step="any"
+                   name="latitude" [(ngModel)]="form.latitude">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Longitude <span class="text-muted">(optional)</span></label>
+            <input class="form-control" type="number" min="-180" max="180" step="any"
+                   name="longitude" [(ngModel)]="form.longitude">
+          </div>
+        </div>
+        <small class="form-text text-muted d-block mt-2">Example for Sousse: 35.8256, 10.6084</small>
+        <div class="mt-3 d-flex gap-2">
+          <button class="btn btn-primary" type="submit" [disabled]="projectForm.invalid">Save</button>
+          <button class="btn btn-outline-secondary" type="button" (click)="cancel()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+<div class="card">
+  <app-list-toolbar
+    [placeholder]="'Search projects...'"
+    [sortOptions]="sortOptions"
+    [filters]="toolbarFilters"
+    [resultCount]="filteredProjects.length"
+    [totalCount]="projects.length"
+    (change)="onListViewChange($event)">
+  </app-list-toolbar>
+  <div class="table-responsive">
+    <table class="table mb-0">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Address</th>
+          <th>Client</th>
+          <th>Status</th>
+          <th>Elevators</th>
+          <th>Coordinates</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (project of filteredProjects; track project.id) {
+          <tr>
+            <td><a [routerLink]="['/projects', project.id]">{{ project.name }}</a></td>
+            <td>{{ project.address || '-' }}</td>
+            <td>{{ clientName(project.clientId) }}</td>
+            <td><span class="badge" [class]="projectBadge(project.status)">{{ statusLabel(project.status) }}</span></td>
+            <td>{{ project.numberOfElevators }}</td>
+            <td>{{ project.latitude != null && project.longitude != null ? project.latitude + ', ' + project.longitude : '-' }}</td>
+            <td class="text-end">
+              <a class="btn btn-sm btn-outline-secondary me-1" [routerLink]="['/projects', project.id]">View</a>
+              <button class="btn btn-sm btn-outline-primary me-1" type="button" (click)="openEdit(project)">Edit</button>
+              <button class="btn btn-sm btn-outline-danger" type="button" (click)="remove(project)">Delete</button>
+            </td>
+          </tr>
+        } @empty {
+          <tr><td colspan="7" class="text-muted">
+            {{ projects.length ? 'No results match your search' : (loading ? 'Loading...' : 'No projects yet.') }}
+          </td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

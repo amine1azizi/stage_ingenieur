@@ -1,0 +1,38 @@
+<section class="page-header">
+  <div>
+    <h1>Project map</h1>
+    <p class="text-muted mb-0">Projects with saved geographic coordinates.</p>
+  </div>
+</section>
+
+<div class="map-controls mb-3">
+  <label class="form-label mb-0" for="project-status">Project status</label>
+  <select
+    id="project-status"
+    class="form-select"
+    [(ngModel)]="selectedStatus"
+    (ngModelChange)="refreshMarkers()">
+    <option value="ALL">All</option>
+    @for (status of statuses; track status) {
+      <option [value]="status">{{ status }}</option>
+    }
+  </select>
+</div>
+
+@if (error) {
+  <div class="alert alert-danger" role="alert">{{ error }}</div>
+}
+@if (loading) {
+  <div class="alert alert-info" role="status">Loading map data...</div>
+}
+@if (loaded && !hasCoordinateProjects) {
+  <div class="alert alert-info" role="status">No project has coordinates yet</div>
+}
+
+<div id="project-map" class="project-map" aria-label="Map of projects in Tunisia"></div>
+
+<div class="map-legend mt-3" aria-label="Project status legend">
+  <span><i class="legend-dot planned"></i> PLANIFIE</span>
+  <span><i class="legend-dot in-progress"></i> EN_COURS</span>
+  <span><i class="legend-dot completed"></i> TERMINE</span>
+</div>

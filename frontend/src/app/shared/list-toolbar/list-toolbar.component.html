@@ -1,0 +1,54 @@
+<div class="row g-2 align-items-end list-toolbar">
+  <div class="col-12 col-lg">
+    <label class="form-label" [for]="'list-search-' + instanceId">Search</label>
+    <div class="input-group">
+      <input
+        [id]="'list-search-' + instanceId"
+        class="form-control"
+        type="search"
+        [placeholder]="placeholder"
+        [ngModel]="search"
+        (ngModelChange)="onSearchChange($event)">
+      @if (search) {
+        <button class="btn btn-outline-secondary" type="button" aria-label="Clear search" (click)="clearSearch()">×</button>
+      }
+    </div>
+  </div>
+  @if (sortOptions.length) {
+    <div class="col-8 col-md-4 col-lg-2">
+      <label class="form-label" [for]="'list-sort-' + instanceId">Sort by</label>
+      <select [id]="'list-sort-' + instanceId" class="form-select" [ngModel]="sortKey" (ngModelChange)="onSortChange($event)">
+        @for (option of sortOptions; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+        }
+      </select>
+    </div>
+    <div class="col-4 col-md-auto">
+      <label class="form-label d-block">&nbsp;</label>
+      <button class="btn btn-outline-secondary direction-button" type="button" (click)="toggleSortDirection()"
+        [attr.aria-label]="sortDir === 'asc' ? 'Sort ascending' : 'Sort descending'">
+        {{ sortDir === 'asc' ? '↑ Asc' : '↓ Desc' }}
+      </button>
+    </div>
+  }
+  @for (filter of filters; track filter.key) {
+    <div class="col-6 col-md-4 col-lg-2">
+      <label class="form-label" [for]="'list-filter-' + instanceId + '-' + filter.key">{{ filter.label }}</label>
+      <select class="form-select" [id]="'list-filter-' + instanceId + '-' + filter.key"
+        [ngModel]="filterValues[filter.key]"
+        (ngModelChange)="onFilterChange(filter.key, $event)">
+        <option value="">All</option>
+        @for (option of filter.options; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+        }
+      </select>
+    </div>
+  }
+  <div class="col-6 col-lg-auto">
+    <label class="form-label d-block">&nbsp;</label>
+    <button class="btn btn-outline-secondary" type="button" (click)="reset()">Reset</button>
+  </div>
+  <div class="col-6 col-lg-auto ms-lg-auto text-muted small result-count">
+    Showing {{ resultCount }} of {{ totalCount }}
+  </div>
+</div>

@@ -1,0 +1,105 @@
+<div class="mb-4">
+  <h1 class="h3 mb-1">My service requests</h1>
+  <p class="text-muted mb-0">Request maintenance for an elevator linked to your client account.</p>
+</div>
+
+@if (error) {
+  <div class="alert alert-danger">{{ error }}</div>
+}
+@if (success) {
+  <div class="alert alert-success">{{ success }}</div>
+}
+
+<div class="card mb-4">
+  <div class="card-body">
+    <h2 class="h5 mb-3">Request maintenance</h2>
+    @if (elevators.length === 0 && !loading) {
+      <p class="text-muted mb-0">No elevators are currently linked to your account. Contact your administrator.</p>
+    } @else {
+      <form (ngSubmit)="submit()">
+        <div class="mb-3">
+          <label class="form-label" for="requestElevator">Elevator</label>
+          <select class="form-select" id="requestElevator" name="elevatorId" [(ngModel)]="elevatorId" required>
+            <option value="" disabled>Select an elevator</option>
+            @for (elevator of elevators; track elevator.id) {
+              <option [value]="elevator.id">{{ elevator.reference }} — {{ elevator.model || 'Elevator' }}</option>
+            }
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="requestDescription">Describe the issue</label>
+          <textarea class="form-control" id="requestDescription" name="description" rows="3"
+                    [(ngModel)]="description" required maxlength="2000"></textarea>
+        </div>
+        <button class="btn btn-primary" type="submit" [disabled]="submitting || !elevatorId">
+          {{ submitting ? 'Submitting...' : 'Submit request' }}
+        </button>
+      </form>
+    }
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <h2 class="h5 mb-3">Request history</h2>
+    <app-list-toolbar [placeholder]="'Search requests...'" [filters]="requestToolbarFilters"
+      [resultCount]="filteredRequests.length" [totalCount]="requests.length"
+      (change)="onRequestListViewChange($event)">
+    </app-list-toolbar>
+    <div class="table-responsive">
+      <table class="table mb-0">
+        <thead>
+          <tr><th>Elevator</th><th>Description</th><th>Status</th><th>Submitted</th></tr>
+        </thead>
+        <tbody>
+          @for (request of filteredRequests; track request.id) {
+            <tr>
+              <td>{{ elevatorName(request.elevatorId) }}</td>
+              <td>{{ request.description }}</td>
+              <td>{{ request.status.replace('_', ' ') }}</td>
+              <td>{{ request.createdAt | date:'medium' }}</td>
+            </tr>
+          } @empty {
+            <tr><td colspan="4" class="text-muted">
+              {{ requests.length ? 'No results match your search' : 'No maintenance requests yet.' }}
+            </td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card mt-4">
+    <div class="card-body">
+      <h2 class="h5 mb-3">My elevators</h2>
+      <app-list-toolbar [placeholder]="'Search elevators...'" [filters]="elevatorToolbarFilters"
+        [resultCount]="filteredElevators.length" [totalCount]="elevators.length"
+        (change)="onElevatorListViewChange($event)">
+      </app-list-toolbar>
+      <div class="table-responsive">
+        <table class="table mb-0">
+          <thead>
+            <tr><th>Reference</th><th>Model</th><th>Capacity</th><th>Floors</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            @for (elevator of filteredElevators; track elevator.id) {
+              <tr>
+                <td>{{ elevator.reference }}</td>
+                <td>{{ elevator.model || '-' }}</td>
+                <td>{{ elevator.capacity }}</td>
+                <td>{{ elevator.numberOfFloors }}</td>
+                <td>{{ elevator.status.replace('_', ' ') }}</td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5" class="text-muted">
+                  {{ elevators.length ? 'No results match your search' : (loading ? 'Loading...' : 'No elevators are linked to your account.') }}
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,12 @@
+<div #mapContainer class="location-map" aria-label="Choose project location"></div>
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-2">
+  <small class="text-muted">
+    Click on the map to set the project location
+    @if (hasLocation) {
+      <span> — Selected: {{ latitude }}, {{ longitude }}</span>
+    }
+  </small>
+  @if (hasLocation) {
+    <button class="btn btn-sm btn-outline-secondary" type="button" (click)="clearLocation()">Clear location</button>
+  }
+</div>

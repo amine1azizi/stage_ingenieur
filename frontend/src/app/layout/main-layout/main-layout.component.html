@@ -1,0 +1,43 @@
+<div class="app-shell">
+  <aside class="sidebar" [class.open]="sidebarOpen">
+    <a class="brand" routerLink="/" aria-label="Fortis Asansör home" (click)="closeSidebar()">
+      <img class="brand-logo brand-logo-full" src="/logo.png" alt="Fortis Asansör">
+      <img class="brand-logo brand-logo-icon" src="/logo_alone.png" alt="">
+    </a>
+
+    <nav class="nav flex-column">
+      @if (isAdmin()) {
+        <a routerLink="/dashboard" routerLinkActive="active" (click)="closeSidebar()">Dashboard</a>
+        <a routerLink="/clients" routerLinkActive="active" (click)="closeSidebar()">Clients</a>
+        <a routerLink="/projects" routerLinkActive="active" (click)="closeSidebar()">Projects</a>
+        <a routerLink="/elevators" routerLinkActive="active" (click)="closeSidebar()">Elevators</a>
+        <a routerLink="/technicians" routerLinkActive="active" (click)="closeSidebar()">Technicians</a>
+        <a routerLink="/interventions" routerLinkActive="active" (click)="closeSidebar()">Interventions</a>
+        <a routerLink="/maintenance" routerLinkActive="active" (click)="closeSidebar()">Maintenance</a>
+        <a routerLink="/maintenance-requests" routerLinkActive="active" (click)="closeSidebar()">Maintenance requests</a>
+        <a routerLink="/map" routerLinkActive="active" (click)="closeSidebar()">Map</a>
+      } @else {
+        <a routerLink="/portal" routerLinkActive="active" (click)="closeSidebar()">My service requests</a>
+      }
+    </nav>
+  </aside>
+
+  @if (sidebarOpen) {
+    <div class="sidebar-backdrop" (click)="closeSidebar()"></div>
+  }
+
+  <div class="content-area">
+    <header class="topbar">
+      <button class="btn btn-outline-light d-lg-none" type="button" (click)="toggleSidebar()">Menu</button>
+      <div class="topbar-title">{{ isAdmin() ? 'Operations console' : 'Client portal' }}</div>
+      <div class="topbar-user">
+        <span>{{ userName() }}</span>
+        <button type="button" class="btn btn-sm btn-outline-light" (click)="logout()">Log out</button>
+      </div>
+    </header>
+
+    <main class="page-content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

@@ -1,0 +1,83 @@
+<div class="mb-4">
+  <h1 class="h3 mb-1">Preventive maintenance</h1>
+  <p class="text-muted mb-0">Maintenance schedule and upcoming service needs for elevators.</p>
+</div>
+
+@if (error) {
+  <div class="alert alert-danger">{{ error }}</div>
+}
+
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <div class="card border-danger h-100">
+      <div class="card-body">
+        <div class="text-danger fw-semibold">Overdue</div>
+        <div class="display-6">{{ overdueCount }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card border-warning h-100">
+      <div class="card-body">
+        <div class="text-warning-emphasis fw-semibold">Due soon</div>
+        <div class="display-6">{{ dueSoonCount }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card border-success h-100">
+      <div class="card-body">
+        <div class="text-success fw-semibold">OK</div>
+        <div class="display-6">{{ okCount }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body border-bottom">
+    <label class="form-label" for="maintenance-state-filter">Filter by state</label>
+    <select id="maintenance-state-filter" class="form-select" name="maintenanceState" [(ngModel)]="selectedState">
+      <option value="">All states</option>
+      <option value="OVERDUE">Overdue</option>
+      <option value="DUE_SOON">Due soon</option>
+      <option value="OK">OK</option>
+    </select>
+  </div>
+  <div class="table-responsive">
+    <table class="table mb-0">
+      <thead>
+        <tr>
+          <th>Elevator</th>
+          <th>Project</th>
+          <th>Last maintenance</th>
+          <th>Next maintenance</th>
+          <th>State</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of filteredItems; track item.id) {
+          <tr>
+            <td>{{ item.reference }}</td>
+            <td>{{ projectName(item.projectId) }}</td>
+            <td>{{ item.lastMaintenanceDate || 'Never' }}</td>
+            <td>{{ item.nextMaintenanceDate }}</td>
+            <td><span class="badge" [class]="stateBadge(item.maintenanceState)">{{ stateLabel(item.maintenanceState) }}</span></td>
+            <td class="text-end">
+              <button class="btn btn-sm btn-outline-primary" type="button" (click)="createIntervention(item.id)">
+                Create intervention
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="6" class="text-muted">
+              {{ loading ? 'Loading...' : (maintenanceItems.length ? 'No elevators match this state.' : 'No maintenance data available.') }}
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

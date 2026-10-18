@@ -1,0 +1,128 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h1 class="h3 mb-1">Dashboard</h1>
+    <p class="text-muted mb-0">Overview of clients, projects and elevator operations</p>
+  </div>
+  <button class="btn btn-outline-primary" type="button" (click)="load()">Refresh</button>
+</div>
+
+@if (error) {
+  <div class="alert alert-danger">{{ error }}</div>
+}
+
+@if (loading) {
+  <p class="text-muted">Loading dashboard data...</p>
+}
+
+<div class="row g-3 mb-4">
+  <div class="col-md-6 col-xl-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <div class="text-muted">Total Clients</div>
+        <div class="display-6">{{ clients.length }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 col-xl-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <div class="text-muted">Total Projects</div>
+        <div class="display-6">{{ projects.length }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 col-xl-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <div class="text-muted">Total Elevators</div>
+        <div class="display-6">{{ elevators.length }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 col-xl-4">
+    <div class="card h-100 border-warning">
+      <div class="card-body">
+        <div class="text-muted">Elevators in Installation</div>
+        <div class="display-6">{{ countByStatus('EN_INSTALLATION') }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 col-xl-4">
+    <div class="card h-100 border-success">
+      <div class="card-body">
+        <div class="text-muted">Installed Elevators</div>
+        <div class="display-6">{{ countByStatus('INSTALLE') }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 col-xl-4">
+    <div class="card h-100 border-info">
+      <div class="card-body">
+        <div class="text-muted">Elevators in Maintenance</div>
+        <div class="display-6">{{ countByStatus('EN_MAINTENANCE') }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-7">
+    <div class="card">
+      <div class="card-header bg-white">Recent interventions</div>
+      <div class="table-responsive">
+        <table class="table mb-0">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Elevator</th>
+              <th>Technician</th>
+              <th>Type</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of recentInterventions(); track item.id) {
+              <tr>
+                <td>{{ item.date || '-' }}</td>
+                <td>{{ elevatorName(item.elevatorId) }}</td>
+                <td>{{ technicianName(item.technicianId) }}</td>
+                <td>{{ item.type || '-' }}</td>
+                <td><span class="badge" [class]="interventionBadge(item.status)">{{ statusLabel(item.status) }}</span></td>
+              </tr>
+            } @empty {
+              <tr><td colspan="5" class="text-muted">No interventions yet.</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="card">
+      <div class="card-header bg-white">Elevator statuses</div>
+      <div class="table-responsive">
+        <table class="table mb-0">
+          <thead>
+            <tr>
+              <th>Reference</th>
+              <th>Project</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of elevators; track item.id) {
+              <tr>
+                <td>{{ item.reference }}</td>
+                <td>{{ projectName(item.projectId) }}</td>
+                <td><span class="badge" [class]="elevatorBadge(item.status)">{{ statusLabel(item.status) }}</span></td>
+              </tr>
+            } @empty {
+              <tr><td colspan="3" class="text-muted">No elevators yet.</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

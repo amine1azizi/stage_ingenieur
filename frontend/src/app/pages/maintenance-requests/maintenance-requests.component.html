@@ -1,0 +1,51 @@
+<div class="mb-4">
+  <h1 class="h3 mb-1">Maintenance requests</h1>
+  <p class="text-muted mb-0">Review customer requests and update their status.</p>
+</div>
+
+@if (error) {
+  <div class="alert alert-danger">{{ error }}</div>
+}
+@if (success) {
+  <div class="alert alert-success">{{ success }}</div>
+}
+
+<div class="card">
+  <app-list-toolbar [placeholder]="'Search requests...'" [sortOptions]="sortOptions"
+    [initialSortDir]="'desc'" [filters]="toolbarFilters"
+    [resultCount]="filteredRequests.length" [totalCount]="requests.length"
+    (change)="onListViewChange($event)">
+  </app-list-toolbar>
+  <div class="table-responsive">
+    <table class="table mb-0">
+      <thead>
+        <tr><th>Client</th><th>Elevator</th><th>Description</th><th>Submitted</th><th>Status</th><th></th></tr>
+      </thead>
+      <tbody>
+        @for (request of filteredRequests; track request.id) {
+          <tr>
+            <td>{{ clientName(request.clientId) }}</td>
+            <td>{{ elevatorName(request.elevatorId) }}</td>
+            <td>{{ request.description }}</td>
+            <td>{{ request.createdAt | date:'medium' }}</td>
+            <td>
+              <select class="form-select form-select-sm" [value]="request.status"
+                      (change)="onStatusChange(request, $event)">
+                @for (status of statuses; track status) {
+                  <option [value]="status">{{ status.replace('_', ' ') }}</option>
+                }
+              </select>
+            </td>
+            <td class="text-end">
+              <button class="btn btn-sm btn-outline-danger" type="button" (click)="remove(request)">Delete</button>
+            </td>
+          </tr>
+        } @empty {
+          <tr><td colspan="6" class="text-muted">
+            {{ requests.length ? 'No results match your search' : (loading ? 'Loading...' : 'No maintenance requests yet.') }}
+          </td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
