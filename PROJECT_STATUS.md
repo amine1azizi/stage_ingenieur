@@ -68,3 +68,9 @@
 - Added optional maintenance date/interval fields to the elevator model, editor, and table; added an ADMIN-only maintenance schedule page with state counters, filter, project-name lookup, state sorting, and intervention creation preselected by elevator.
 - Files changed: frontend elevator model/service/editor, maintenance page component and template, app routes, main sidebar, and interventions component; `PROJECT_STATUS.md`.
 - Verification: `frontend\npm run build` passed. Existing Leaflet CommonJS and Bootstrap selector warnings remain.
+
+## Docker / Docker Compose
+- Created `backend/Dockerfile`, `backend/.dockerignore`, `frontend/Dockerfile`, `frontend/.dockerignore`, `frontend/nginx.conf`, root `docker-compose.yml`, and `.env.example`. The existing root `.gitignore` already excludes `.env`; no real `.env` was retained.
+- Start: copy `.env.example` to `.env`, replace its local placeholders, then run `docker compose up --build -d`. Stop with `docker compose down`; this retains the `mongo_data` volume.
+- Ports: frontend `http://localhost:4200`, backend `http://localhost:8087`; MongoDB is available only on the Compose network and does not publish host port 27017.
+- Verification: all three containers started; MongoDB and backend reported healthy. `GET /api/clients` returned 401 unauthenticated, admin login succeeded with role ADMIN and returned a token, and `GET /` on port 4200 returned HTTP 200 with the Angular app root. `docker compose ps` and the last 30 backend log lines confirmed service startup and MongoDB connectivity. Stack was brought down and the temporary `.env` deleted; the named Mongo volume remains.

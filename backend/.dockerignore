@@ -1,0 +1,4 @@
+target/
+.idea/
+start-dev.sh
+*.md
